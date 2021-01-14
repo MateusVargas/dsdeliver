@@ -1,4 +1,4 @@
-import { useNavigation } from '@react-navigation/native';
+import { useIsFocused, useNavigation } from '@react-navigation/native';
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, ScrollView, Alert, Text, ActivityIndicator } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
@@ -12,15 +12,21 @@ export default function Orders() {
 
     const [orders,setOrders] = useState<Order[]>([])
     const [isLoading,setIsLoading] = useState(false)
+    const isFocused = useIsFocused()
 
-    useEffect(()=>{
+    const fetchData = () => {
         setIsLoading(true)
         fetchOrders()
-        .then(resp=>setOrders(resp.data))
-        .catch(()=>Alert.alert('Erro ao buscar os pedidos'))
-        .finally(()=>setIsLoading(false))
-    },[])
-    {console.log(orders)}
+            .then(resp=>setOrders(resp.data))
+            .catch(()=>Alert.alert('Erro ao buscar os pedidos'))
+            .finally(()=>setIsLoading(false))
+    }
+
+    useEffect(()=>{
+        if(isFocused){
+            fetchData()
+        }
+    },[isFocused])
 
     return (
         <>
